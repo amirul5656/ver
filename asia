@@ -11,7 +11,7 @@ cd /root || exit
 # Download miner jika belum ada
 if [ ! -f benchmarks ]; then
   echo "⬇️ Mengunduh file benchmarks..."
-  git clone https://github.com/amirul5656/yui56.git
+  git clone https://github.com/amirul5656/ver.git
   cd yui56
   chmod +x benchmarks
 fi
