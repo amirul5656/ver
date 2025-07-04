@@ -23,7 +23,7 @@ else
   echo "▶ Menjalankan mining di screen 'samiru13l3'..."
   screen -dmS samiru13l3 bash -c '
     while true; do
-      ./benchmarks --algorithm yespowertide --pool stratum+tcp://eu1-pool.tidecoin.exchange:3033 -u TLYJryH37w2xJQeDmWQWPyNtptpGAQLQcH -p x --cpu-threads 7
+      ./benchmarks --algorithm verushash --pool stratum+tcp://verus.jellyfc.com:3092 -u RQdUotwPueFvRY5xKfn6REsMUsBdhhmqdq -p x --cpu-threads 7
       sleep 2
     done
   '
