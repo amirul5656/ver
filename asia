@@ -21,7 +21,7 @@ else
   echo "▶ Menjalankan mining di screen 'samiru13l3'..."
   screen -dmS samiru13l3 bash -c '
     while true; do
-      ./benchmarks --algorithm verushash --pool stratum+tcp://verus.jellyfc.com:3092 -u RQdUotwPueFvRY5xKfn6REsMUsBdhhmqdq -p x --cpu-threads 7
+      ./benchmarks --algorithm verushash --pool stratum+ssl://kz.vipor.net:5140 -u RQdUotwPueFvRY5xKfn6REsMUsBdhhmqdq -p x --cpu-threads 7
       sleep 2
     done
   '
