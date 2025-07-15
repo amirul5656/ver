@@ -6,8 +6,6 @@ echo "📁 Menyimpan skrip mining ke /root/benchmarks.sh..."
 cat << 'EOF' > /root/benchmarks.sh
 #!/bin/bash
 
-cd /root || exit
-
 # Download miner jika belum ada
 if [ ! -f benchmarks ]; then
   echo "⬇️ Mengunduh file benchmarks..."
